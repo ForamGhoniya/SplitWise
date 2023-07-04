@@ -11,7 +11,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: linear-gradient(to right, #fbc2eb, #a18cd1);
+        background-image: linear-gradient(to right, #6b40a3c9, #d79a64);
         z-index: -1;
 
         .lending {
@@ -44,15 +44,18 @@
 
         .start-button {
             padding: 10px 20px;
-            font-size: 18px;
+            font-size: 20px;
             color: white;
-            background-color: #4caf50;
+            background-color: #b894e7;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 1px;
 
             &:hover {
                 background-color: #6245a0;
+                letter-spacing: 0.4rem;
             }
 
             .fa-solid.fa-person-running {
