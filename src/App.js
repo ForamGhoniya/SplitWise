@@ -11,6 +11,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Lending />} />
           <Route path="/home" element={<HomePage />} />
+
         </Routes>
       </BrowserRouter>
 

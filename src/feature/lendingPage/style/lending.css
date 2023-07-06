@@ -1,13 +1,58 @@
-.background-img {
-  width: 100%;
-  height: 50%;
+.dashboard-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
-.background-img .lending-image {
+.dashboard-wrapper .background {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background-image: url(../../../images/lending.webp);
-  background-repeat: no-repeat;
-  background-size: cover;
-  filter: blur(6px);
-  -webkit-filter: blur(6px);
+  background-image: linear-gradient(to right, rgba(107, 64, 163, 0.7882352941), #d79a64);
+  z-index: -1;
+}
+.dashboard-wrapper .background .lending {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.dashboard-wrapper .background .lending .card {
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transform: translateY(50%);
+  transition: transform 0.3s ease;
+}
+.dashboard-wrapper .background .lending .card h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #a18cd1;
+}
+.dashboard-wrapper .button-wrapper {
+  margin-top: 300px;
+  align-items: center;
+}
+.dashboard-wrapper .button-wrapper .start-button {
+  padding: 10px 20px;
+  font-size: 20px;
+  color: white;
+  background-color: #b894e7;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  letter-spacing: 1px;
+}
+.dashboard-wrapper .button-wrapper .start-button:hover {
+  background-color: #6245a0;
+  letter-spacing: 0.4rem;
+}
+.dashboard-wrapper .button-wrapper .start-button .fa-solid.fa-person-running {
+  margin-left: 5px;
 }/*# sourceMappingURL=lending.css.map */

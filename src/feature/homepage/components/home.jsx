@@ -1,27 +1,32 @@
 import React, { useState, useEffect } from "react";
+import "../../homepage/style/homeStyle.scss";
 
 const saveToLocalStorage = (key, data) => {
     localStorage.setItem(key, JSON.stringify(data));
 };
 
 const getFromLocalStorage = (key) => {
-    return localStorage.getItem(key);
+    return JSON.parse(localStorage.getItem(key));
 };
 
-const HomePage = () => {
+const ExpenseForm = () => {
     const [expenses, setExpenses] = useState([]);
     const [description, setDescription] = useState("");
-    const [amount, setAmount] = useState("");
-    const [paidBy, setPaidBy] = useState("user1");
-    const [participants, setParticipants] = useState([]);
-    const [newParticipant, setNewParticipant] = useState("");
-
-    const defaultParticipants = ["you", "user2", "user3", "user4", "user5"];
+    const [amount, setAmount] = useState(0);
+    const [members, setMembers] = useState([
+        "You",
+        "Om",
+        "Sapna",
+        "Shruti",
+        "Shivani",
+    ]);
+    const [paidBy, setPaidBy] = useState("");
+    const [newMember, setNewMember] = useState("");
 
     useEffect(() => {
         const savedExpenses = getFromLocalStorage("expenses");
         if (savedExpenses) {
-            setExpenses(JSON.parse(savedExpenses));
+            setExpenses(savedExpenses);
         }
     }, []);
 
@@ -29,136 +34,157 @@ const HomePage = () => {
         saveToLocalStorage("expenses", expenses);
     }, [expenses]);
 
-    const handleNewParticipant = () => {
-        if (newParticipant.trim() !== "") {
-            setParticipants([...participants, newParticipant]);
-            setNewParticipant("");
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value);
+    };
+
+    const handleAmountChange = (e) => {
+        setAmount(parseFloat(e.target.value));
+    };
+
+    const handlePaidByChange = (e) => {
+        setPaidBy(e.target.value);
+    };
+
+    const handleNewMemberChange = (e) => {
+        setNewMember(e.target.value);
+    };
+
+    const handleAddMember = (e) => {
+        e.preventDefault();
+
+        if (newMember.trim() !== "") {
+            setMembers([...members, newMember]);
+            setNewMember("");
         }
     };
 
-    const handleSplitBill = () => {
-        const numParticipants = participants.length;
-        if (numParticipants === 0) {
-            alert("Please select at least one participant.");
-            return;
-        }
+    const handleRemoveMember = (member) => {
+        setMembers(members.filter((m) => m !== member));
+    };
 
-        const splitAmount = parseFloat(amount) / numParticipants;
+    const handleExpenseSubmit = (e) => {
+        e.preventDefault();
 
         const newExpense = {
             description,
             amount,
+            members,
             paidBy,
-            participants: [...participants],
-            splitAmount,
+            splitAmount: amount / members.length,
         };
-
         setExpenses([...expenses, newExpense]);
-
         setDescription("");
-        setAmount("");
-        setPaidBy("user1");
-        setParticipants([]);
+        setAmount(0);
+        setPaidBy("");
     };
 
     return (
-        <div>
-            <h1>SplitWise Application</h1>
-
-            <h2>Add Expense</h2>
-            <label htmlFor="description">Expense Description:</label>
-            <input
-                type="text"
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Description"
-            />
-            <br />
-
-            <label htmlFor="amount">Expense Amount:</label>
-            <input
-                type="number"
-                id="amount"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="Amount"
-            />
-            <br />
-
-            <label htmlFor="paid-by">Paid By:</label>
-            <select
-                id="paid-by"
-                value={paidBy}
-                onChange={(e) => setPaidBy(e.target.value)}
-            >
-                {defaultParticipants.map((participant) => (
-                    <option
-                        key={participant}
-                        value={participant}
+        <>
+            <div className="container">
+                <div className="form-group">
+                    <div>
+                        <label className="label">Description:</label>
+                        <input
+                            type="text"
+                            className="input"
+                            value={description}
+                            onChange={handleDescriptionChange}
+                        />
+                    </div>
+                    <div>
+                        <label className="label">Amount:</label>
+                        <input
+                            type="number"
+                            value={amount}
+                            onChange={handleAmountChange}
+                        />
+                    </div>
+                    <div>
+                        <label className="label">Paid By:</label>
+                        <select
+                            value={paidBy}
+                            className="select"
+                            onChange={handlePaidByChange}
+                        >
+                            {members.map((member) => (
+                                <option
+                                    key={member}
+                                    value={member}
+                                >
+                                    {member}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="member-container">
+                        <p>Members:</p>
+                        {members.map((member) => (
+                            <div key={member}>
+                                <label className="member-label">{member}</label>
+                                <button
+                                    type="button"
+                                    className="member-button"
+                                    onClick={() => handleRemoveMember(member)}
+                                >
+                                    ╳
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                    <div>
+                        <label className="label">Add Member:</label>
+                        <input
+                            type="text"
+                            value={newMember}
+                            onChange={handleNewMemberChange}
+                        />
+                        <button
+                            type="button"
+                            className="button"
+                            onClick={handleAddMember}
+                        >
+                            Add
+                        </button>
+                    </div>
+                    <button
+                        type="submit"
+                        className="button"
+                        onClick={handleExpenseSubmit}
                     >
-                        {participant}
-                    </option>
-                ))}
-            </select>
-            <br />
+                        Split
+                    </button>
 
-            <label>Participants:</label>
-            {defaultParticipants.map((participant) => (
-                <label key={participant}>
-                    <input
-                        type="checkbox"
-                        checked={participants.includes(participant)}
-                        onChange={(e) => {
-                            if (e.target.checked) {
-                                setParticipants([...participants, participant]);
-                            } else {
-                                setParticipants(
-                                    participants.filter(
-                                        (p) => p !== participant
-                                    )
-                                );
-                            }
-                        }}
-                    />
-                    {participant}
-                </label>
-            ))}
-            <br />
-
-            <label htmlFor="new-participant">New Participant:</label>
-            <input
-                type="text"
-                id="new-participant"
-                value={newParticipant}
-                onChange={(e) => setNewParticipant(e.target.value)}
-                placeholder="New Participant"
-            />
-            <button onClick={handleNewParticipant}>Add Participant</button>
-            <br />
-
-            <button onClick={handleSplitBill}>Split Bill</button>
-            <br />
-
-            <h2>Expense List</h2>
-            {expenses.length === 0 ? (
-                <p>No expenses added yet.</p>
-            ) : (
-                <ul>
-                    {expenses.map((expense, index) => (
-                        <li key={index}>
-                            <strong>Description:</strong> {expense.description},{" "}
-                            <strong>Amount:</strong> {expense.amount},{" "}
-                            <strong>Paid By:</strong> {expense.paidBy},{" "}
-                            <strong>Participants:</strong>{" "}
-                            {expense.participants.join(", ")} <br />
-                            <strong>Split Amount:</strong> {expense.splitAmount}
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
+                    <h2 className="expense-list">Expense List</h2>
+                    {expenses.length === 0 ? (
+                        <p>No expenses added yet.</p>
+                    ) : (
+                        <ul className="expense-item">
+                            {expenses.map((expense, index) => (
+                                <li key={index}>
+                                    <strong className="expense-description">
+                                        Description:
+                                    </strong>{" "}
+                                    {expense.description},{" "}
+                                    <strong className="expense-amount">
+                                        Amount:
+                                    </strong>{" "}
+                                    {expense.amount}, <strong>Paid By:</strong>{" "}
+                                    {expense.paidBy},{" "}
+                                    <strong>Participants:</strong>{" "}
+                                    {expense.members.join(", ")} <br />
+                                    <strong className="expense-split">
+                                        Split Amount:
+                                    </strong>{" "}
+                                    {expense.splitAmount}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            </div>
+        </>
     );
 };
 
-export default HomePage;
+export default ExpenseForm;
