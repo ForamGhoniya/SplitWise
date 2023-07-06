@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../../homepage/style/homeStyle.scss";
+import BackHome from "./back";
+import UserId from "./userInformation";
 
 const saveToLocalStorage = (key, data) => {
     localStorage.setItem(key, JSON.stringify(data));
@@ -81,7 +83,11 @@ const ExpenseForm = () => {
 
     return (
         <>
+            <BackHome />
             <div className="container">
+                <div className="header">
+                    <UserId />
+                </div>
                 <div className="form-group">
                     <div>
                         <label className="label">Description:</label>
