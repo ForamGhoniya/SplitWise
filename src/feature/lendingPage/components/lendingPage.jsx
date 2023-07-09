@@ -23,7 +23,7 @@ const Lending = () => {
                             navigate("/home");
                         }}
                     >
-                        WelCome{" "}
+                        Get Started
                     </button>
                 </div>
             </div>
