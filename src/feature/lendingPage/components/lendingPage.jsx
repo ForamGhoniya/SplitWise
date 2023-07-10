@@ -1,5 +1,5 @@
-import "../../lendingPage/style/lending.scss";
 import { useNavigate } from "react-router-dom";
+import "../../lendingPage/style/lending.scss";
 import Logo from "../../../images/logo2.png";
 
 const Lending = () => {
