@@ -1,11 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import "../../homepage/style/homeStyle.scss";
 import Back from "../../../images/back.png";
+import { useLocation } from "react-router-dom";
 
-function BackHome() {
+function BackLanding() {
     const navigate = useNavigate();
+    const location = useLocation();
     const clickHandler = () => {
-        navigate("/", { replace: true });
+        if (
+            location.pathname == "/allExpenses" ||
+            location.pathname == "/AddExpense"
+        ) {
+            navigate("/home", { replace: true });
+        } else {
+            navigate("/", { replace: true });
+        }
     };
     return (
         <>
@@ -22,4 +31,4 @@ function BackHome() {
         </>
     );
 }
-export default BackHome;
+export default BackLanding;

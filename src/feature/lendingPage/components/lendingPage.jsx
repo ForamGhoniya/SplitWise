@@ -1,5 +1,6 @@
 import "../../lendingPage/style/lending.scss";
 import { useNavigate } from "react-router-dom";
+import Logo from "../../../images/logo2.png";
 
 const Lending = () => {
     const navigate = useNavigate();
@@ -11,8 +12,13 @@ const Lending = () => {
             >
                 <div className="background">
                     <div className="lending">
-                        <div class="card">
-                            <h1>Split Wise</h1>
+                        <div className="logo-wrapper"></div>
+                        <div className="card">
+                            <img
+                                src={Logo}
+                                alt="split logo"
+                                className="logo-image"
+                            />
                         </div>
                     </div>
                 </div>

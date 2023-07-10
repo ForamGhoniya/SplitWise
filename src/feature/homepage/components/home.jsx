@@ -1,20 +1,23 @@
 import React from "react";
 import "../../homepage/style/homeStyle.scss";
-import BackHome from "./back";
+import BackLending from "./back";
 import UserId from "./userInformation";
-import ShowData from "./groupInformation";
+import ShowListData from "./groupListInformation";
 
-const Home = ({ groupData }) => {
+const Home = ({ groupData, handleCurrentData }) => {
     return (
         <>
             <div className="split-wise-wrapper">
                 <div className="container">
-                    <BackHome />
+                    <BackLending />
                     <div className="header">
                         <UserId />
                     </div>
                     <div className="new-expense">
-                        <ShowData groupData={groupData} />
+                        <ShowListData
+                            groupData={groupData}
+                            handleCurrentData={handleCurrentData}
+                        />
                     </div>
                 </div>
             </div>

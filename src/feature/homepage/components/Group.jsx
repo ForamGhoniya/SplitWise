@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../homepage/style/homeStyle.scss";
+import "../../homepage/style/homeResponsive.scss";
 import { useNavigate } from "react-router-dom";
 
 const GroupData = ({
@@ -8,30 +9,37 @@ const GroupData = ({
     paidByName,
     amount,
     members,
+    lentAmount,
     splitAmount,
 }) => {
+    const [transactions, setTransactions] = useState([]);
     const navigate = useNavigate();
     const spentAmount = amount;
     const yourLentAmount = amount - splitAmount;
     const calculateTransaction = () => {
         const totalAmount = parseFloat(amount);
-        const totalMembers = members.length;
+        const totalMembers = members?.length;
         const memberAmount = totalAmount / totalMembers;
-        const transactions = members.map((member) => ({
-            giver: member.name,
-            taker: paidByName,
+        const transactions = members?.map((member) => ({
+            giver: paidByName,
+            taker: member.name,
             amount: memberAmount - parseFloat(member.givenAmount),
+            hasPaid: member.hasPaid,
         }));
 
-        return transactions.filter((transaction) => transaction.amount !== 0);
+        return transactions?.filter((transaction) => transaction.amount !== 0);
     };
+    const storedFormData = localStorage.getItem("formData");
 
-    const transactions = calculateTransaction();
+    useEffect(() => {
+        const mytransactions = calculateTransaction();
+        setTransactions(mytransactions);
+    }, [members?.length]);
 
-    const goToSplit = () => {
+    const goToSplit = (member) => {
         return navigate({
             pathname: "/SplitExpense",
-            // search: `?name=${member.name}&amount=${member.amount}`,
+            search: `?name=${member.name}&amount=${member.amount}`,
         });
     };
 
@@ -40,10 +48,22 @@ const GroupData = ({
             <div className="group-info-wrapper">
                 <div className="group-information">
                     <h2>{groupName}</h2>
-                    <p>Description: {description}</p>
-                    <p>Paid by: {paidByName}</p>
-                    <p>Spent Amount: {spentAmount}</p>
-                    <p>Lent Amount: {yourLentAmount}</p>
+
+                    <div className="description-wrapper">
+                        <p className="description">
+                            Description: {description}
+                        </p>
+                        <p className="description">Paid by: {paidByName}</p>
+                    </div>
+
+                    <div className="amount-wrapper">
+                        <p className="amount">
+                            Spent Amount: <br /> {spentAmount}
+                        </p>
+                        <p className="amount">
+                            Lent Amount: <br /> {yourLentAmount}
+                        </p>
+                    </div>
 
                     <div className="transactions">
                         {transactions?.length > 0 && (
@@ -56,7 +76,9 @@ const GroupData = ({
                                                 transaction.taker && (
                                                 <li key={index}>
                                                     {transaction.giver} has to{" "}
-                                                    {transaction.amount > 0
+                                                    {transaction.amount > 0 &&
+                                                    transaction.giver ==
+                                                        transaction.taker
                                                         ? "give"
                                                         : "take"}{" "}
                                                     {Math.abs(
@@ -73,11 +95,14 @@ const GroupData = ({
                     <h3>Members:</h3>
                     <ul>
                         {members
-                            .filter((member) => member.name != paidByName)
+                            ?.filter((member) => member.name != paidByName)
                             .map((member, index) => (
                                 <li key={index}>
                                     {member.name} - {member.amount}
-                                    <button onClick={() => goToSplit(member)}>
+                                    <button
+                                        className="split-up"
+                                        onClick={() => goToSplit(member)}
+                                    >
                                         Split Up
                                     </button>
                                 </li>

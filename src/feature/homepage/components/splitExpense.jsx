@@ -3,9 +3,16 @@ import "../../homepage/style/homeStyle.scss";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
-const SplitForm = ({ members, currentTotalAmount, onSet }) => {
+const SplitForm = ({
+    members,
+    currentTotalAmount,
+    onSet,
+    currentGroupDataIndex,
+}) => {
+    const [currentMembersList, setCurrentMembersList] = useState(members);
     const [currentData, setCurrentData] = useState([]);
     const [description, setDescription] = useState("");
+    const [groupName, setGroupName] = useState("");
     const [totalPayAmount, setTotalPayAmount] = useState(0);
     const [paidBy, setPaidBy] = useState("");
     const [paidTo, setPaidTo] = useState("");
@@ -18,30 +25,45 @@ const SplitForm = ({ members, currentTotalAmount, onSet }) => {
     const amount = searchParams.get("amount");
 
     useEffect(() => {
+        setCurrentMembersList(members);
         const storedFormData = localStorage.getItem("formData");
         if (storedFormData) {
             const parsedFormData = JSON.parse(storedFormData);
-            setDescription(parsedFormData.description);
+            setDescription(parsedFormData[currentGroupDataIndex].description);
+            setGroupName(parsedFormData[currentGroupDataIndex].groupName);
+            setPaidTo(parsedFormData[currentGroupDataIndex].paidByName);
             setCurrentData(parsedFormData);
         }
         setTotalPayAmount(amount);
         setPaidBy(name);
-        setPaidTo(name);
     }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const formData = [...currentData];
 
-        e.preventDefault();
-        let filteredMember = members;
-        const formData = {
-            ...currentData,
-        };
-        localStorage.setItem("formData", JSON.stringify(currentData));
-        setDescription("");
-        setPaidBy("");
-        setTotalPayAmount(0);
-        navigate("/home");
+        let updatedFormData = formData.map((item, index) => {
+            if (index == Number(currentGroupDataIndex)) {
+                let updatedMembers = [...item.members].map((item) => {
+                    if (item.name == name) {
+                        return { ...item, isPaid: true };
+                    } else {
+                        return {
+                            ...item,
+                            isPaid: item.isPaid ? item.isPaid : false,
+                        };
+                    }
+                });
+                return {
+                    ...item,
+                    members: updatedMembers,
+                };
+            } else {
+                return item;
+            }
+        });
+        localStorage.setItem("formData", JSON.stringify(updatedFormData));
+        navigate("/allExpenses");
     };
 
     return (
@@ -51,22 +73,24 @@ const SplitForm = ({ members, currentTotalAmount, onSet }) => {
                     onSubmit={handleSubmit}
                     className="card"
                 >
-                    <div>
-                        <label>
-                            Description:
-                            <input
-                                type="text"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            />
-                        </label>
+                    <div className="card-field">
+                        <p className="card-label text-input">
+                            GroupName: {groupName}{" "}
+                        </p>
                     </div>
 
-                    <div>
-                        <label>
-                            Total Pay Amount:
+                    <div className="card-field">
+                        <p className="card-label text-input">
+                            Description: {description}{" "}
+                        </p>
+                    </div>
+
+                    <div className="card-field">
+                        <label className="card-label">
+                            Amount to pay:
                             <input
                                 type="number"
+                                className="text-input"
                                 value={totalPayAmount}
                                 onChange={(e) =>
                                     setTotalPayAmount(e.target.value)
@@ -74,16 +98,20 @@ const SplitForm = ({ members, currentTotalAmount, onSet }) => {
                             />
                         </label>
                     </div>
-
                     <div>
+                        <p></p>
+                    </div>
+                    <div className="card-field">
                         <label className="label">
-                            Paid By:
+                            Paid By :
                             <select
                                 value={paidBy}
+                                className="select-paid-by"
                                 onChange={(e) => setPaidBy(e.target.value)}
+                                disabled
                             >
                                 <option value="">Select</option>
-                                {members.map((member, index) => (
+                                {currentMembersList.map((member, index) => (
                                     <option
                                         key={index}
                                         value={member.name}
@@ -92,13 +120,14 @@ const SplitForm = ({ members, currentTotalAmount, onSet }) => {
                                     </option>
                                 ))}
                             </select>
-                            paid
+                            <span> to: </span>
                             <select
+                                className="select-paid-by"
                                 value={paidTo}
                                 onChange={(e) => setPaidTo(e.target.value)}
                             >
                                 <option value="">Select</option>
-                                {members.map((member, index) => (
+                                {currentMembersList.map((member, index) => (
                                     <option
                                         key={index}
                                         value={member.name}
@@ -109,13 +138,14 @@ const SplitForm = ({ members, currentTotalAmount, onSet }) => {
                             </select>
                         </label>
                     </div>
-
-                    <button
-                        type="submit"
-                        className="button"
-                    >
-                        Submit
-                    </button>
+                    <div className="save-button">
+                        <button
+                            type="submit"
+                            className="button"
+                        >
+                            Settle Up
+                        </button>
+                    </div>
                 </form>
             </div>
         </>

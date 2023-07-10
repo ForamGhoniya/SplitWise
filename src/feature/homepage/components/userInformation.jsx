@@ -17,7 +17,6 @@ function UserId() {
                         <p className="user-email">forampatel188@gmail.com</p>
                     </div>
                 </div>
-
             </div>
         </>
     );

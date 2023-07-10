@@ -19,8 +19,11 @@
             justify-content: center;
             align-items: center;
             height: 100%;
+            max-height: 470px;
 
             .card {
+                width: 100px;
+                height: 80px;
                 padding: 30px;
                 background-color: #ffffff;
                 border-radius: 10px;
@@ -34,12 +37,17 @@
                     margin-bottom: 10px;
                     color: #a18cd1;
                 }
+
+                .logo-image {
+                    width: 100%;
+                    height: 100%;
+                }
             }
         }
     }
 
     .button-wrapper {
-        margin-top: 300px;
+        margin-top: 165px;
         align-items: center;
 
         .start-button {

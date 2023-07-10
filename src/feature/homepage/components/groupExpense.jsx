@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
 import "../../homepage/style/homeStyle.scss";
 import { useNavigate } from "react-router-dom";
+import BackLending from "./back";
 
 const GroupForm = ({ members, currentTotalAmount, onSet }) => {
     const [description, setDescription] = useState("");
+    const [groupName, setGroupName] = useState("");
     const [totalPayAmount, setTotalPayAmount] = useState(0);
     const [paidBy, setPaidBy] = useState("");
+
     const navigate = useNavigate();
 
     useEffect(() => {
         const storedFormData = localStorage.getItem("formData");
         if (storedFormData) {
             const parsedFormData = JSON.parse(storedFormData);
-
+            setGroupName(parsedFormData.groupName);
             setDescription(parsedFormData.description);
             setTotalPayAmount(parsedFormData.totalPayAmount);
             setPaidBy(parsedFormData.paidBy);
@@ -24,7 +27,7 @@ const GroupForm = ({ members, currentTotalAmount, onSet }) => {
         let splitAmt =
             (+currentTotalAmount + +totalPayAmount) / +members?.length;
         const formData = {
-            groupName: "subway",
+            groupName: groupName,
             description: description,
             paidByName: paidBy,
             amount: +currentTotalAmount + +totalPayAmount,
@@ -39,7 +42,11 @@ const GroupForm = ({ members, currentTotalAmount, onSet }) => {
             splitAmount: splitAmt,
         };
 
-        localStorage.setItem("formData", JSON.stringify(formData));
+        const storedFormData = localStorage.getItem("formData");
+
+        let updatedData = [storedFormData, formData];
+
+        localStorage.setItem("formData", JSON.stringify(updatedData));
 
         onSet(formData);
         setDescription("");
@@ -51,10 +58,24 @@ const GroupForm = ({ members, currentTotalAmount, onSet }) => {
     return (
         <>
             <div className="card-container">
+                <div className="back-button">
+                    <BackLending />
+                </div>
                 <form
                     onSubmit={handleSubmit}
                     className="card"
                 >
+                    <div className="card-field">
+                        <label className="card-label">
+                            Group Name:
+                            <input
+                                type="text"
+                                className="text-input"
+                                value={groupName}
+                                onChange={(e) => setGroupName(e.target.value)}
+                            />
+                        </label>
+                    </div>
                     <div className="card-field">
                         <label className="card-label">
                             Description:
@@ -90,7 +111,7 @@ const GroupForm = ({ members, currentTotalAmount, onSet }) => {
                                 onChange={(e) => setPaidBy(e.target.value)}
                             >
                                 <option value="">Select</option>
-                                {members.map((member, index) => (
+                                {members?.map((member, index) => (
                                     <option
                                         key={index}
                                         value={member.name}
